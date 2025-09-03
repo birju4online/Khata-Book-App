@@ -1,0 +1,2059 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Khata Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2E7D32; /* Deep Green */
+            --secondary-color: #66BB6A; /* Lighter Green */
+            --accent-color: #81C784; /* Even lighter green */
+            --text-color: #333333;
+            --bg-color: #F0F2F5;
+            --card-bg: #FFFFFF;
+            --due-color: #E53935; /* Brighter Red */
+            --paid-color: #1976D2; /* Stronger Blue */
+            --light-grey: #e0e0e0;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Reduced shadow */
+            --border-radius: 12px; /* Reduced border-radius */
+        }
+        
+        /* Dark Theme Styles */
+        body.dark-theme {
+            --primary-color: #121212;
+            --secondary-color: #424242;
+            --accent-color: #383838;
+            --text-color: #E0E0E0;
+            --bg-color: #121212;
+            --card-bg: #1E1E1E;
+            --light-grey: #333333;
+            --shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            touch-action: pan-y;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        #app-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Fullscreen-specific styles */
+        #app-container:fullscreen {
+            max-width: none;
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto; /* Enable scrolling for fullscreen content */
+            margin: 0;
+            box-shadow: none;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.25rem; /* Reduced padding */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.15rem; /* Reduced font size */
+            font-weight: 700;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            transition: background-color 0.3s ease;
+        }
+
+        .header .left-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Reduced gap */
+        }
+
+        .header .right-group {
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* Reduced gap */
+        }
+        
+        /* Header menu for home screen */
+        .home-menu-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1rem 1.25rem; /* Reduced padding */
+            font-size: 1.15rem; /* Reduced font size */
+            font-weight: 700;
+            box-shadow: var(--shadow);
+            z-index: 10;
+            transition: background-color 0.3s ease;
+            gap: 0.5rem 1rem; /* Reduced gap */
+            position: relative;
+        }
+        
+        .home-menu-header .icon-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.4rem; /* Reduced font size */
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+            padding: 0;
+            line-height: 1;
+            position: relative;
+        }
+        
+        .home-menu-header .icon-btn:hover {
+            color: var(--light-grey);
+        }
+
+        .home-menu-header .icon-btn:active {
+            transform: scale(0.9);
+        }
+        
+        /* Dropdown menu for database icon */
+        .database-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: none;
+            flex-direction: column;
+            min-width: 150px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .database-dropdown.show {
+            display: flex;
+        }
+
+        .database-dropdown button {
+            background: none;
+            border: none;
+            padding: 0.75rem 1rem; /* Adjusted padding */
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+        
+        .database-dropdown button:hover {
+            background-color: var(--light-grey);
+        }
+
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 0.75rem 1.25rem; /* Reduced padding */
+            font-size: 0.95rem; /* Reduced font size */
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:hover {
+            background-color: var(--accent-color);
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.4rem; /* Reduced font size */
+            cursor: pointer;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            color: var(--light-grey);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.9);
+        }
+
+        .search-bar {
+            padding: 1rem; /* Reduced padding */
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--light-grey);
+            box-shadow: var(--shadow);
+        }
+        
+        .search-bar input {
+            width: 100%;
+            padding: 0.75rem; /* Reduced padding */
+            border: 1px solid var(--light-grey);
+            border-radius: var(--border-radius);
+            font-size: 0.95rem; /* Reduced font size */
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+            background-color: inherit;
+            color: inherit;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+        }
+        
+        .search-bar input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(46, 125, 50, 0.2); /* Reduced shadow */
+        }
+        
+        form {
+            padding: 1.5rem; /* Reduced padding */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* Reduced gap */
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            margin: 1rem; /* Reduced margin */
+            box-shadow: var(--shadow);
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 0.95rem; /* Reduced font size */
+            font-weight: bold;
+            margin-bottom: 0.5rem; /* Reduced margin */
+        }
+        
+        .form-group input, .form-group select {
+            padding: 0.75rem; /* Reduced padding */
+            border: 1px solid var(--light-grey);
+            border-radius: 8px; /* Reduced border-radius */
+            font-size: 0.95rem; /* Reduced font size */
+            transition: border-color 0.3s ease;
+            background-color: inherit;
+            color: inherit;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .no-customers {
+            text-align: center;
+            padding: 2rem; /* Reduced padding */
+            color: #999;
+            font-style: italic;
+        }
+        
+        body.dark-theme .no-customers {
+            color: #666;
+        }
+
+        .customer-list-container {
+            flex-grow: 1;
+            padding: 1rem; /* Reduced padding */
+            overflow-y: auto;
+            background-color: var(--bg-color);
+        }
+
+        .customer-list-table-header {
+            display: flex;
+            font-weight: bold;
+            background-color: var(--accent-color);
+            color: white;
+            padding: 0.75rem; /* Reduced padding */
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            font-size: 0.9rem; /* Reduced font size */
+        }
+        
+        .customer-list-table-header > div {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .customer-list-table-header .customer-balance-header {
+            text-align: right;
+        }
+
+        .customer-card-wrapper {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--light-grey);
+            transition: background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .customer-card-wrapper:last-child {
+            border-bottom: none;
+            border-radius: 0 0 var(--border-radius) var(--border-radius);
+        }
+
+        .customer-card-info {
+            flex-grow: 1;
+            display: flex;
+            padding: 0.8rem; /* Reduced padding */
+            cursor: pointer;
+            font-size: 0.95rem; /* Reduced font size */
+        }
+
+        .customer-card-info:hover {
+            background-color: var(--light-grey);
+        }
+
+        .customer-card-info > div {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .customer-card-info .customer-name {
+            font-weight: bold;
+        }
+
+        .customer-card-info .customer-balance {
+            text-align: right;
+            justify-content: flex-end;
+            font-weight: bold;
+        }
+        
+        .balance.due {
+            color: var(--due-color);
+        }
+
+        .balance.paid {
+            color: var(--paid-color);
+        }
+
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem; /* Reduced font size */
+            background-color: var(--card-bg);
+        }
+
+        .transaction-table th, .transaction-table td {
+            padding: 0.75rem 0.5rem; /* Reduced padding */
+            text-align: left;
+            border-bottom: 1px solid var(--light-grey);
+        }
+        
+        .transaction-table th:first-child, .transaction-table td:first-child {
+            padding-left: 1rem;
+        }
+        
+        .transaction-table th:last-child, .transaction-table td:last-child {
+            padding-right: 1rem;
+        }
+
+        .transaction-table th {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: bold;
+        }
+        
+        body.dark-theme .transaction-table th {
+            background-color: var(--secondary-color);
+        }
+
+        .transaction-table .status-cell {
+            font-weight: bold;
+        }
+
+        .transaction-table .status-cell.PAID {
+            color: var(--paid-color);
+        }
+
+        .transaction-table .status-cell.DUE {
+            color: var(--due-color);
+        }
+
+        .action-cell {
+            text-align: right;
+            position: relative;
+        }
+
+        .action-menu-btn {
+            background: none;
+            border: none;
+            font-size: 1.4rem; /* Reduced font size */
+            cursor: pointer;
+            color: #666;
+            padding: 0 0.8rem; /* Reduced padding */
+            transition: color 0.2s ease;
+        }
+        
+        body.dark-theme .action-menu-btn {
+            color: #999;
+        }
+
+        .action-menu-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .action-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: var(--card-bg);
+            border: 1px solid var(--light-grey);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            min-width: 120px; /* Reduced min-width */
+            overflow: hidden;
+        }
+
+        .action-menu button {
+            background: none;
+            border: none;
+            padding: 0.6rem 0.8rem; /* Reduced padding */
+            text-align: left;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: var(--text-color);
+            font-size: 0.9rem; /* Reduced font size */
+        }
+        
+        .action-menu button:hover {
+            background-color: var(--light-grey);
+        }
+
+        .action-menu.left {
+            right: auto;
+            left: 0;
+        }
+
+        #history-screen .content-container {
+            flex-grow: 1;
+            padding: 1rem 0; /* Reduced padding */
+            background-color: var(--bg-color);
+        }
+        
+        /* इतिहास स्क्रीन के हेडर के लिए स्टाइल */
+        #history-screen .header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding-bottom: 0.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        #history-screen .header .header-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        #history-screen .header .filter-row {
+            display: flex;
+            width: 100%;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 0.75rem; /* Reduced gap */
+            margin-top: 0.75rem; /* Reduced margin */
+            flex-wrap: wrap; 
+            padding: 0 1.25rem 0.75rem; /* Reduced padding */
+        }
+        
+        #history-screen .header .filter-row label {
+            white-space: nowrap; 
+            color: white;
+            font-size: 0.9rem; /* Reduced font size */
+            font-weight: 700;
+        }
+
+        #history-screen .header .filter-row input[type="date"] {
+            padding: 0.5rem; /* Reduced padding */
+            border: none;
+            border-radius: 6px; /* Reduced border-radius */
+            background-color: var(--accent-color);
+            color: white;
+            font-family: inherit;
+            font-size: 0.85rem; /* Reduced font size */
+            flex-grow: 1;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        #history-screen .header .filter-row input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
+        #history-screen .header .filter-row .btn {
+            padding: 0.5rem 1rem; /* Reduced padding */
+            font-size: 0.85rem; /* Reduced font size */
+        }
+        
+        /* मासिक सारांश के लिए नया कार्ड स्टाइल */
+        #history-screen .monthly-summary-container {
+            margin: 0 1rem 1rem; /* Reduced margin */
+            background-color: var(--card-bg);
+            padding: 1rem; /* Reduced padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+        
+        #history-screen .monthly-summary-container .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0; /* Reduced padding */
+            font-size: 0.95rem; /* Reduced font size */
+        }
+        
+        .overall-summary-list {
+            flex-grow: 1;
+            padding: 1rem; /* Reduced padding */
+            display: flex;
+            flex-direction: column;
+            gap: 1rem; /* Reduced gap */
+            background-color: var(--bg-color);
+        }
+
+        .overall-summary-card {
+            background-color: var(--card-bg);
+            padding: 1rem; /* Reduced padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease;
+            font-size: 0.95rem; /* Reduced font size */
+        }
+        
+        .overall-summary-card:hover {
+            transform: translateY(-3px); /* Reduced transform */
+        }
+
+        .overall-total {
+            text-align: center;
+            padding: 1rem; /* Reduced padding */
+            font-size: 1.25rem; /* Reduced font size */
+            font-weight: bold;
+            background-color: var(--secondary-color);
+            color: white;
+            margin: 1rem; /* Reduced margin */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .json-viewer-container {
+            flex-grow: 1;
+            padding: 1rem; /* Reduced padding */
+            overflow-y: auto;
+            background-color: #2b2b2b;
+            color: #f8f8f2;
+        }
+        
+        .json-viewer-container pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem; /* Reduced font size */
+            line-height: 1.5;
+        }
+        
+        /* Settings Screen Specific Styles */
+        #settings-screen .form-group {
+            gap: 0.5rem; /* Reduced gap */
+        }
+        
+        .theme-options {
+            display: flex;
+            justify-content: space-around;
+            gap: 1rem; /* Reduced gap */
+        }
+        
+        .theme-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem; /* Reduced gap */
+            cursor: pointer;
+            padding: 0.8rem 1rem; /* Reduced padding */
+            border-radius: 8px; /* Reduced border-radius */
+            border: 1px solid var(--light-grey);
+            transition: background-color 0.3s ease;
+            flex-grow: 1;
+        }
+        
+        .theme-option:hover {
+            background-color: var(--light-grey);
+        }
+        
+        input[type="radio"] {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 1.15rem; /* Reduced size */
+            height: 1.15rem; /* Reduced size */
+            border-radius: 50%;
+            border: 2px solid var(--primary-color);
+            position: relative;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        
+        input[type="radio"]:checked::after {
+            content: '';
+            width: 0.65rem; /* Reduced size */
+            height: 0.65rem; /* Reduced size */
+            background-color: var(--primary-color);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        #message-box {
+            position: fixed;
+            bottom: 1.5rem; /* Reduced bottom position */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.75rem 1rem; /* Reduced padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            text-align: center;
+            min-width: 200px; /* Reduced min-width */
+            font-size: 0.9rem;
+        }
+
+        #message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #message-box.error {
+            background-color: var(--due-color);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 2rem; /* Reduced padding */
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            max-width: 400px; /* Reduced max-width */
+            width: 90%;
+            text-align: center;
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .modal-content p {
+            margin-bottom: 1.5rem; /* Reduced margin */
+            font-size: 1.05rem; /* Reduced font size */
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem; /* Reduced gap */
+        }
+
+        .modal-buttons .btn {
+            padding: 0.7rem 1.5rem; /* Reduced padding */
+            font-size: 0.9rem;
+        }
+
+        .modal-buttons .cancel-btn {
+            background-color: #999;
+        }
+
+        /* Error Popup Specific Styles */
+        #error-modal .modal-content {
+            border-top: 5px solid var(--due-color);
+            padding-top: 1.5rem;
+        }
+        
+        #error-modal .modal-content h3 {
+            color: var(--due-color);
+            margin-bottom: 0.5rem;
+        }
+        
+        #error-details {
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            padding: 0.75rem;
+            text-align: left;
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.85rem;
+            color: var(--text-color);
+            margin-bottom: 1rem;
+        }
+
+        body.dark-theme #error-details {
+            background-color: #2b2b2b;
+            border-color: #444;
+            color: #f8f8f2;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                font-size: 1.05rem;
+                padding: 0.8rem 1rem;
+            }
+            .overall-total {
+                margin: 0;
+                border-radius: 0;
+                font-size: 1.15rem;
+            }
+            form {
+                margin: 0.8rem;
+                padding: 1.2rem;
+            }
+            .customer-list-container {
+                padding: 0.8rem;
+            }
+            .customer-list-table-header {
+                padding: 0.7rem;
+                font-size: 0.85rem;
+            }
+            .customer-card-info {
+                padding: 0.7rem;
+                font-size: 0.9rem;
+            }
+            .search-bar {
+                padding: 0.8rem;
+            }
+            .search-bar input {
+                padding: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen">
+            <!-- Updated Header for Home Screen -->
+            <div class="home-menu-header">
+                <span class="icon-btn" id="database-menu-btn">🗃️
+                    <div class="database-dropdown" id="database-dropdown">
+                        <button id="import-btn">आयात करें</button>
+                        <button id="export-btn">निर्यात करें</button>
+                    </div>
+                </span>
+                <span class="icon-btn" id="overallSummaryBtn">📊</span>
+                <span class="icon-btn" id="add-customer-btn">+</span>
+                <span class="icon-btn" id="show-json-btn">&lt;/&gt;</span>
+                <span class="icon-btn" id="fullscreen-btn">⛶</span>
+                <span class="icon-btn" id="settings-btn">⚙️</span>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" id="customer-search" placeholder="ग्राहक खोजें...">
+            </div>
+
+            <!-- ग्राहक सूची के लिए नया टेबल जैसा लेआउट -->
+            <div class="customer-list-container">
+                <div class="customer-list-table-header">
+                    <div>नाम</div>
+                    <div>मोबाइल नंबर</div>
+                    <div class="customer-balance-header">बैलेंस</div>
+                    <div></div>
+                </div>
+                <div id="customer-card-list"></div>
+            </div>
+            <p id="no-customers" class="no-customers">कोई ग्राहक नहीं है। एक नया ग्राहक जोड़ने के लिए '+' बटन पर क्लिक करें।</p>
+            <input type="file" id="file-input" style="display:none;" accept=".json">
+        </div>
+
+        <!-- Add/Edit Customer Screen -->
+        <div id="add-customer-screen" class="screen">
+            <div class="header">
+                <div class="left-group">
+                    <span class="icon-btn" id="add-customer-back-btn">←</span>
+                </div>
+                <span id="add-customer-title">नया ग्राहक जोड़ें</span>
+                <div class="right-group">
+                    <span class="icon-btn" id="fullscreen-btn-add">⛶</span>
+                </div>
+            </div>
+            <form id="customer-form">
+                <input type="hidden" id="customer-id">
+                <div class="form-group">
+                    <label for="customer-name">नाम</label>
+                    <input type="text" id="customer-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="customer-mobile">मोबाइल नंबर (वैकल्पिक)</label>
+                    <input type="text" id="customer-mobile">
+                </div>
+                <div class="form-group">
+                    <label for="customer-type">प्रकार</label>
+                    <select id="customer-type" required>
+                        <option value="Khata">खाता</option>
+                        <option value="Non-Khata">नॉन-खाता</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">ग्राहक सहेजें</button>
+            </form>
+        </div>
+
+        <!-- Daily Entry Screen -->
+        <div id="daily-entry-screen" class="screen">
+            <div class="header">
+                <div class="left-group">
+                    <span class="icon-btn" id="daily-entry-back-btn">←</span>
+                </div>
+                <span>लेन-देन प्रविष्टि</span>
+                <div class="right-group">
+                    <span class="icon-btn" id="fullscreen-btn-entry">⛶</span>
+                </div>
+            </div>
+            <form id="daily-entry-form">
+                <input type="hidden" id="entry-id">
+                <input type="hidden" id="entry-customer-id">
+                <div class="form-group">
+                    <label for="entry-date">तारीख</label>
+                    <input type="date" id="entry-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="entry-detail">विवरण (वैकल्पिक)</label>
+                    <input type="text" id="entry-detail">
+                </div>
+                <div class="form-group">
+                    <label for="entry-amount">राशि</label>
+                    <input type="number" id="entry-amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="entry-status">स्थिति</label>
+                    <select id="entry-status" required>
+                        <option value="DUE">देय (Due)</option>
+                        <option value="PAID">भुगतान किया गया (Paid)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">लेन-देन सहेजें</button>
+            </form>
+        </div>
+        
+        <!-- History Screen -->
+        <div id="history-screen" class="screen">
+            <div class="header">
+                <div class="header-row">
+                    <span class="icon-btn" id="history-back-btn">←</span>
+                    <span id="history-customer-name"></span>
+                    <span class="icon-btn" id="fullscreen-btn-history">⛶</span>
+                    <span class="icon-btn" id="addTransactionTopBtn">+</span>
+                    <button id="shareReportBtn" class="btn">शेयर करें</button>
+                </div>
+                <div class="filter-row">
+                    <label for="from-date">From:</label>
+                    <input type="date" id="from-date">
+                    <label for="to-date">To:</label>
+                    <input type="date" id="to-date">
+                    <button id="filter-ok-btn" class="btn">OK</button>
+                </div>
+            </div>
+            <div class="content-container">
+                <div id="monthly-summary-container" class="monthly-summary-container">
+                    <div class="summary-item">
+                        <span>कुल देय:</span>
+                        <span id="summary-due-amount" class="balance due">₹0.00</span>
+                    </div>
+                    <div class="summary-item">
+                        <span>कुल भुगतान:</span>
+                        <span id="summary-paid-amount" class="balance paid">₹0.00</span>
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>तारीख</th>
+                                <th>विवरण</th>
+                                <th>राशि</th>
+                                <th>स्थिति</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Summary Screen -->
+        <div id="overall-summary-screen" class="screen">
+            <div class="header">
+                <div class="left-group">
+                    <span class="icon-btn" id="overall-summary-back-btn">←</span>
+                </div>
+                <span>कुल सारांश</span>
+                <div class="right-group">
+                    <span class="icon-btn" id="fullscreen-btn-summary">⛶</span>
+                </div>
+            </div>
+            <div class="overall-total">
+                कुल बकाया राशि: <span id="overall-due-amount">₹0.00</span>
+            </div>
+            <div id="overall-summary-list" class="overall-summary-list"></div>
+        </div>
+        
+        <!-- JSON Viewer Screen -->
+        <div id="json-viewer-screen" class="screen">
+            <div class="header">
+                <div class="left-group">
+                    <span class="icon-btn" id="json-viewer-back-btn">←</span>
+                </div>
+                <span>JSON डेटाबेस</span>
+                <div class="right-group">
+                    <span class="icon-btn" id="fullscreen-btn-json">⛶</span>
+                </div>
+            </div>
+            <div class="json-viewer-container">
+                <pre id="json-output"></pre>
+            </div>
+        </div>
+        
+        <!-- Settings Screen -->
+        <div id="settings-screen" class="screen">
+            <div class="header">
+                <div class="left-group">
+                    <span class="icon-btn" id="settings-back-btn">←</span>
+                </div>
+                <span>सेटिंग्स</span>
+                <div class="right-group">
+                    <span class="icon-btn" id="fullscreen-btn-settings">⛶</span>
+                </div>
+            </div>
+            <form id="settings-form">
+                <div class="form-group">
+                    <label>थीम</label>
+                    <div class="theme-options">
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="light" checked>
+                            <span>लाइट</span>
+                        </label>
+                        <label class="theme-option">
+                            <input type="radio" name="theme" value="dark">
+                            <span>डार्क</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="upi-id">UPI ID</label>
+                    <input type="text" id="upi-id" placeholder="अपनी UPI ID दर्ज करें">
+                </div>
+                <div class="form-group">
+                    <label for="user-name">नाम</label>
+                    <input type="text" id="user-name" placeholder="अपना नाम दर्ज करें">
+                </div>
+                <button type="submit" class="btn">सेटिंग्स सहेजें</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Floating Message Box -->
+    <div id="message-box"></div>
+
+    <!-- Custom Modals -->
+    <div id="delete-modal" class="modal-overlay">
+        <div class="modal-content">
+            <p id="delete-modal-message">क्या आप इस आइटम को हटाना चाहते हैं?</p>
+            <div class="modal-buttons">
+                <button id="delete-confirm-btn" class="btn">हाँ</button>
+                <button id="delete-cancel-btn" class="btn cancel-btn">नहीं</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <p>यह प्रक्रिया मौजूदा डेटा को हटा देगी और इसे आयातित डेटा से बदल देगी। क्या आप जारी रखना चाहते हैं?</p>
+            <div class="modal-buttons">
+                <button id="import-confirm-btn" class="btn">हाँ, डेटा आयात करें</button>
+                <button id="import-cancel-btn" class="btn cancel-btn">नहीं, रद्द करें</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Popup -->
+    <div id="error-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>ओह! कुछ गलत हो गया।</h3>
+            <p>कृपया इस त्रुटि का विवरण कॉपी करके हमें भेजें।</p>
+            <pre id="error-details"></pre>
+            <div class="modal-buttons">
+                <button id="copy-error-btn" class="btn">कॉपी करें</button>
+                <button id="close-error-btn" class="btn cancel-btn">बंद करें</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // IndexedDB को मैनेज करने के लिए Promise-based Wrapper
+        const DB_NAME = 'KhataBookDB';
+        const DB_VERSION = 3; // डेटाबेस संस्करण को 3 पर अपडेट करें
+        const CUSTOMERS_STORE = 'customers';
+        const DAILY_BOOK_STORE = 'dailyBook';
+        const SUMMARY_STORE = 'customerSummary';
+        const SETTINGS_STORE = 'settings'; // सेटिंग्स के लिए नया स्टोर
+        let db;
+        
+        // एक Promise-आधारित फ़ंक्शन जो IndexedDB डेटाबेस को खोलता है या बनाता है।
+        async function openDatabase() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    // 'customers' ऑब्जेक्ट स्टोर बनाएँ
+                    if (!db.objectStoreNames.contains(CUSTOMERS_STORE)) {
+                        db.createObjectStore(CUSTOMERS_STORE, { keyPath: 'CustomerID', autoIncrement: true });
+                    }
+                    // 'dailyBook' ऑब्जेक्ट स्टोर बनाएँ और 'CustomerID' पर एक इंडेक्स जोड़ें
+                    if (!db.objectStoreNames.contains(DAILY_BOOK_STORE)) {
+                        const dailyBookStore = db.createObjectStore(DAILY_BOOK_STORE, { keyPath: 'EntryID', autoIncrement: true });
+                        dailyBookStore.createIndex('CustomerID', 'CustomerID', { unique: false });
+                    }
+                    // 'customerSummary' ऑब्जेक्ट स्टोर बनाएँ
+                    if (!db.objectStoreNames.contains(SUMMARY_STORE)) {
+                        db.createObjectStore(SUMMARY_STORE, { keyPath: 'CustomerID' });
+                    }
+                    // 'settings' ऑब्जेक्ट स्टोर बनाएँ
+                    if (!db.objectStoreNames.contains(SETTINGS_STORE)) {
+                        db.createObjectStore(SETTINGS_STORE, { keyPath: 'id' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+
+                request.onerror = (event) => {
+                    reject('Database error: ' + event.target.errorCode);
+                };
+            });
+        }
+        
+        // एक ऑब्जेक्ट स्टोर में डेटा जोड़ने के लिए
+        async function addData(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.add(data);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+        
+        // एक ऑब्जेक्ट स्टोर से सभी डेटा प्राप्त करने के लिए
+        async function getAllData(storeName) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+        
+        // एक ऑब्जेक्ट स्टोर में डेटा को अपडेट करने के लिए
+        async function updateData(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(data);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+        
+        // एक ऑब्जेक्ट स्टोर से डेटा को हटाने के लिए
+        async function deleteData(storeName, key) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.delete(key);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+        
+        // किसी विशिष्ट कुंजी के आधार पर डेटा प्राप्त करने के लिए
+        async function getData(storeName, key) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.get(key);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        // किसी विशिष्ट इंडेक्स के आधार पर डेटा प्राप्त करने के लिए
+        async function getDataByIndex(storeName, indexName, key) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const index = store.index(indexName);
+                const request = index.getAll(key);
+
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+        
+        // सभी ऑब्जेक्ट स्टोर से सभी डेटा को साफ़ करने के लिए
+        async function clearAllData() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([CUSTOMERS_STORE, DAILY_BOOK_STORE, SUMMARY_STORE, SETTINGS_STORE], 'readwrite');
+                const customerStore = transaction.objectStore(CUSTOMERS_STORE);
+                const dailyBookStore = transaction.objectStore(DAILY_BOOK_STORE);
+                const summaryStore = transaction.objectStore(SUMMARY_STORE);
+                const settingsStore = transaction.objectStore(SETTINGS_STORE);
+                
+                customerStore.clear();
+                dailyBookStore.clear();
+                summaryStore.clear();
+                settingsStore.clear();
+                
+                transaction.oncomplete = () => resolve();
+                transaction.onerror = (event) => reject(event.target.error);
+            });
+        }
+        
+        // UI एलिमेंट्स का चयन
+        const screens = document.querySelectorAll('.screen');
+        const appContainer = document.getElementById('app-container');
+        const customerCardList = document.getElementById('customer-card-list');
+        const noCustomersMessage = document.getElementById('no-customers');
+        const messageBox = document.getElementById('message-box');
+        const fileInput = document.getElementById('file-input');
+        const customerSearchInput = document.getElementById('customer-search');
+        
+        const summaryDueAmount = document.getElementById('summary-due-amount');
+        const summaryPaidAmount = document.getElementById('summary-paid-amount');
+        const fromDateInput = document.getElementById('from-date');
+        const toDateInput = document.getElementById('to-date');
+        const shareReportBtn = document.getElementById('shareReportBtn');
+        const fullscreenBtns = document.querySelectorAll('[id^="fullscreen-btn"]');
+
+        const errorModal = document.getElementById('error-modal');
+        const errorDetails = document.getElementById('error-details');
+        
+        let allCustomers = [];
+        let currentCustomerId = null;
+        let deleteModalData = null;
+        let importModalData = null;
+        
+        const THEME_KEY = 'app_theme';
+        const MONTHS = ['जनवरी', 'फरवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+
+        // स्क्रीन नेविगेशन फ़ंक्शन
+        function showScreen(id) {
+            screens.forEach(screen => {
+                screen.style.display = 'none';
+            });
+            document.getElementById(id).style.display = 'flex';
+        }
+
+        // फ्लोटिंग मैसेज बॉक्स दिखाना
+        function showMessage(message, isSuccess = true) {
+            messageBox.textContent = message;
+            messageBox.className = 'show';
+            if (!isSuccess) {
+                messageBox.classList.add('error');
+            }
+            setTimeout(() => {
+                messageBox.classList.remove('show');
+                messageBox.classList.remove('error');
+            }, 3000);
+        }
+
+        // नया त्रुटि पॉपअप दिखाना
+        function showErrorPopup(error) {
+            const errorString = error instanceof Error ? error.stack : (error ? error.toString() : 'अज्ञात त्रुटि');
+            errorDetails.textContent = `Error: ${errorString}`;
+            errorModal.style.display = 'flex';
+        }
+
+        // त्रुटि पॉपअप बंद करना
+        function closeErrorPopup() {
+            errorModal.style.display = 'none';
+        }
+
+        // ग्राहक के सारांश डेटा को अपडेट करना
+        async function updateCustomerSummary(customerId) {
+            try {
+                const transactions = await getDataByIndex(DAILY_BOOK_STORE, 'CustomerID', customerId);
+                let totalDue = 0;
+                let totalPaid = 0;
+
+                transactions.forEach(entry => {
+                    if (entry.Status === 'DUE') {
+                        totalDue += entry.Amount;
+                    } else {
+                        totalPaid += entry.Amount;
+                    }
+                });
+
+                const totalBalance = totalDue - totalPaid;
+
+                const summaryData = {
+                    CustomerID: customerId,
+                    totalDue: totalDue,
+                    totalPaid: totalPaid,
+                    totalBalance: totalBalance
+                };
+
+                await updateData(SUMMARY_STORE, summaryData);
+            } catch (error) {
+                console.error('सारांश अपडेट करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+        
+        // ग्राहक कार्ड रेंडर करना
+        async function renderCustomerList(filterText = '') {
+            try {
+                // `allCustomers` वेरिएबल से डेटा का उपयोग करें
+                if (allCustomers.length === 0) {
+                    allCustomers = await getAllData(CUSTOMERS_STORE);
+                }
+
+                const filteredCustomers = allCustomers.filter(customer =>
+                    customer.Name.toLowerCase().includes(filterText.toLowerCase())
+                );
+                
+                customerCardList.innerHTML = '';
+
+                if (filteredCustomers.length === 0) {
+                    noCustomersMessage.style.display = 'block';
+                } else {
+                    noCustomersMessage.style.display = 'none';
+                    for (const customer of filteredCustomers) {
+                        // सारांश तालिका से सीधे बैलेंस प्राप्त करें
+                        const summary = await getData(SUMMARY_STORE, customer.CustomerID);
+                        const balance = summary ? summary.totalBalance : 0;
+                        
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'customer-card-wrapper';
+                        
+                        const cardInfo = document.createElement('div');
+                        cardInfo.className = 'customer-card-info';
+                        cardInfo.dataset.id = customer.CustomerID;
+                        cardInfo.onclick = () => showCustomerHistory(customer.CustomerID);
+                        
+                        cardInfo.innerHTML = `
+                            <div class="customer-name">${customer.Name}</div>
+                            <div class="customer-mobile">${customer.MobileNo || '-'}</div>
+                            <div class="customer-balance balance ${balance < 0 ? 'paid' : 'due'}">
+                                ₹${Math.abs(balance).toFixed(2)}
+                            </div>
+                        `;
+                        wrapper.appendChild(cardInfo);
+
+                        // एक्शन मेनू बटन जोड़ें
+                        const actionCell = document.createElement('div');
+                        actionCell.className = 'action-cell';
+                        const actionBtn = document.createElement('button');
+                        actionBtn.className = 'action-menu-btn';
+                        actionBtn.textContent = '⋮';
+                        actionBtn.onclick = (event) => toggleActionMenu(event, 'customers', customer.CustomerID);
+                        actionCell.appendChild(actionBtn);
+                        wrapper.appendChild(actionCell);
+
+                        customerCardList.appendChild(wrapper);
+                    }
+                }
+            } catch (error) {
+                console.error('ग्राहक सूची रेंडर करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+
+        // ग्राहक इतिहास स्क्रीन दिखाना
+        async function showCustomerHistory(customerId, startDate = null, endDate = null) {
+            try {
+                const customer = allCustomers.find(c => c.CustomerID === customerId);
+                const allTransactions = await getDataByIndex(DAILY_BOOK_STORE, 'CustomerID', customerId);
+
+                if (!customer) {
+                    showMessage('ग्राहक नहीं मिला।', false);
+                    return;
+                }
+                
+                currentCustomerId = customerId;
+                document.getElementById('history-customer-name').textContent = customer.Name;
+                
+                // डिफ़ॉल्ट तारीखें सेट करें अगर वे प्रदान नहीं की गई हैं
+                if (!startDate || !endDate) {
+                    const today = new Date();
+                    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+                    fromDateInput.valueAsDate = firstDayOfMonth;
+                    toDateInput.valueAsDate = lastDayOfMonth;
+                    startDate = firstDayOfMonth.toISOString().split('T')[0];
+                    endDate = lastDayOfMonth.toISOString().split('T')[0];
+                } else {
+                    fromDateInput.value = startDate;
+                    toDateInput.value = endDate;
+                }
+                
+                const filteredTransactions = allTransactions.filter(entry => {
+                    const entryDate = new Date(entry.EntryDate);
+                    return entryDate >= new Date(startDate) && entryDate <= new Date(endDate);
+                });
+
+                let dueInMonth = 0;
+                let paidInMonth = 0;
+                
+                filteredTransactions.forEach(entry => {
+                    if (entry.Status === 'DUE') {
+                        dueInMonth += entry.Amount;
+                    } else {
+                        paidInMonth += entry.Amount;
+                    }
+                });
+
+                summaryDueAmount.textContent = `₹${dueInMonth.toFixed(2)}`;
+                summaryPaidAmount.textContent = `₹${paidInMonth.toFixed(2)}`;
+
+                const sortedTransactions = filteredTransactions.sort((a, b) => new Date(b.EntryDate) - new Date(a.EntryDate));
+
+                const tableBody = document.getElementById('history-table-body');
+                tableBody.innerHTML = '';
+
+                if (sortedTransactions.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 2rem; color: #999;">इस तारीख सीमा में कोई लेन-देन नहीं है।</td></tr>`;
+                }
+
+                sortedTransactions.forEach(entry => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${entry.EntryDate}</td>
+                        <td>${entry.JobDetail || '-'}</td>
+                        <td>₹${entry.Amount.toFixed(2)}</td>
+                        <td class="status-cell ${entry.Status}">${entry.Status === 'DUE' ? 'देय' : 'भुगतान किया गया'}</td>
+                        <td class="action-cell">
+                            <button class="action-menu-btn" data-entry-id="${entry.EntryID}">⋮</button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+
+                document.querySelectorAll('.action-menu-btn').forEach(btn => {
+                    btn.onclick = (event) => toggleActionMenu(event, 'dailyBook', parseInt(btn.dataset.entryId), customerId);
+                });
+                
+                showScreen('history-screen');
+            } catch (error) {
+                console.error('इतिहास दिखाने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+        
+        // कुल सारांश दिखाना
+        async function showOverallSummary() {
+            try {
+                const summaries = await getAllData(SUMMARY_STORE);
+                const customers = await getAllData(CUSTOMERS_STORE);
+                const summaryList = document.getElementById('overall-summary-list');
+                const overallDueAmount = document.getElementById('overall-due-amount');
+                summaryList.innerHTML = '';
+                
+                let totalDue = 0;
+                
+                for (const summary of summaries) {
+                    const customer = customers.find(c => c.CustomerID === summary.CustomerID);
+                    if (customer && summary.totalBalance > 0) {
+                        totalDue += summary.totalBalance;
+                        const card = document.createElement('div');
+                        card.className = 'overall-summary-card';
+                        card.innerHTML = `
+                            <span>${customer.Name}</span>
+                            <span class="balance due">₹${summary.totalBalance.toFixed(2)}</span>
+                        `;
+                        summaryList.appendChild(card);
+                    }
+                }
+                
+                overallDueAmount.textContent = `₹${totalDue.toFixed(2)}`;
+                showScreen('overall-summary-screen');
+            } catch (error) {
+                console.error('कुल सारांश लोड करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+
+        // ग्राहक फ़ॉर्म सबमिट हैंडलर
+        document.getElementById('customer-form').onsubmit = async (event) => {
+            event.preventDefault();
+            const customerId = document.getElementById('customer-id').value;
+            const customerName = document.getElementById('customer-name').value;
+            const customerMobile = document.getElementById('customer-mobile').value;
+            const customerType = document.getElementById('customer-type').value;
+            
+            const customerData = {
+                Name: customerName,
+                MobileNo: customerMobile,
+                Type: customerType
+            };
+            
+            try {
+                if (customerId) {
+                    // ग्राहक अपडेट करें
+                    customerData.CustomerID = parseInt(customerId);
+                    await updateData(CUSTOMERS_STORE, customerData);
+                    showMessage('ग्राहक सफलतापूर्वक अपडेट हो गया।');
+                } else {
+                    // नया ग्राहक जोड़ें
+                    const newCustomerId = await addData(CUSTOMERS_STORE, customerData);
+                    // नए ग्राहक के लिए प्रारंभिक सारांश रिकॉर्ड बनाएँ
+                    await addData(SUMMARY_STORE, { CustomerID: newCustomerId, totalDue: 0, totalPaid: 0, totalBalance: 0 });
+                    showMessage('नया ग्राहक सफलतापूर्वक जोड़ा गया।');
+                }
+                document.getElementById('customer-form').reset();
+                showScreen('home-screen');
+                allCustomers = await getAllData(CUSTOMERS_STORE); // अपडेटेड डेटा प्राप्त करें
+                renderCustomerList();
+            } catch (error) {
+                console.error('ग्राहक सहेजने में विफल:', error);
+                showErrorPopup(error);
+            }
+        };
+
+        // लेन-देन फ़ॉर्म सबमिट हैंडलर
+        document.getElementById('daily-entry-form').onsubmit = async (event) => {
+            event.preventDefault();
+            const entryId = document.getElementById('entry-id').value;
+            const customerId = parseInt(document.getElementById('entry-customer-id').value);
+            const entryDate = document.getElementById('entry-date').value;
+            const entryDetail = document.getElementById('entry-detail').value;
+            const entryAmount = parseFloat(document.getElementById('entry-amount').value);
+            const entryStatus = document.getElementById('entry-status').value;
+
+            const entryData = {
+                CustomerID: customerId,
+                EntryDate: entryDate,
+                JobDetail: entryDetail,
+                Amount: entryAmount,
+                Status: entryStatus
+            };
+
+            try {
+                if (entryId) {
+                    entryData.EntryID = parseInt(entryId);
+                    await updateData(DAILY_BOOK_STORE, entryData);
+                    showMessage('लेन-देन सफलतापूर्वक अपडेट हो गया।');
+                } else {
+                    await addData(DAILY_BOOK_STORE, entryData);
+                    showMessage('नया लेन-देन सफलतापूर्वक जोड़ा गया।');
+                }
+                
+                await updateCustomerSummary(customerId); // सारांश अपडेट करें
+                document.getElementById('daily-entry-form').reset();
+                showCustomerHistory(customerId);
+            } catch (error) {
+                console.error('लेन-देन सहेजने में विफल:', error);
+                showErrorPopup(error);
+            }
+        };
+        
+        // सेटिंग्स फ़ॉर्म सबमिट हैंडलर
+        document.getElementById('settings-form').onsubmit = async (event) => {
+            event.preventDefault();
+            const theme = document.querySelector('input[name="theme"]:checked').value;
+            const upiId = document.getElementById('upi-id').value;
+            const userName = document.getElementById('user-name').value;
+            
+            const settingsData = {
+                id: THEME_KEY,
+                theme: theme,
+                upi_id: upiId,
+                user_name: userName
+            };
+            
+            try {
+                await updateData(SETTINGS_STORE, settingsData);
+                applyTheme(theme);
+                showMessage('सेटिंग्स सफलतापूर्वक सहेजी गई।');
+                showScreen('home-screen');
+            } catch (error) {
+                console.error('सेटिंग्स सहेजने में विफल:', error);
+                showErrorPopup(error);
+            }
+        };
+
+        // थीम को लागू करना
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+        }
+
+        // फुलस्क्रीन को चालू/बंद करना
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                appContainer.requestFullscreen().catch(err => {
+                    console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    showErrorPopup(err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        // फुलस्क्रीन इवेंट पर बटन का आइकन अपडेट करना
+        document.addEventListener('fullscreenchange', (event) => {
+            const isFullscreen = document.fullscreenElement;
+            fullscreenBtns.forEach(btn => {
+                btn.textContent = isFullscreen ? '⛶' : '⛶'; // एक ही आइकन रखते हैं
+            });
+        });
+
+        // एक्शन मेनू का स्थिति जाँचें और उसे फ्लिप करें
+        function toggleActionMenu(event, type, key, customerId = null) {
+            const existingMenu = document.querySelector('.action-menu');
+            if (existingMenu) {
+                existingMenu.remove();
+            }
+
+            // अगर मेनू पहले से खुला था और उसी बटन पर क्लिक किया गया, तो बस बंद करें
+            if (existingMenu && existingMenu.dataset.key === key.toString()) {
+                return;
+            }
+
+            const menu = document.createElement('div');
+            menu.className = 'action-menu';
+            menu.dataset.key = key;
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'संपादित करें';
+            editBtn.onclick = () => {
+                if (type === 'customers') {
+                    editCustomer(parseInt(key));
+                } else {
+                    editTransaction(parseInt(key));
+                }
+                menu.remove();
+            };
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'हटाएँ';
+            deleteBtn.onclick = () => {
+                showDeleteModal(type, parseInt(key), customerId);
+                menu.remove();
+            };
+
+            menu.appendChild(editBtn);
+            menu.appendChild(deleteBtn);
+            
+            const parentCell = event.target.closest('.action-cell');
+            parentCell.appendChild(menu);
+
+            // मेनू की स्थिति जाँचें और अगर जरूरत हो तो उसे फ्लिप करें
+            const rect = menu.getBoundingClientRect();
+            if (rect.right > window.innerWidth) {
+                menu.classList.add('left');
+            }
+        }
+
+        // ग्राहक को संपादित करने के लिए डेटा लोड करना
+        async function editCustomer(customerId) {
+            try {
+                const customers = await getAllData(CUSTOMERS_STORE);
+                const customer = customers.find(c => c.CustomerID === customerId);
+                if (customer) {
+                    document.getElementById('customer-id').value = customer.CustomerID;
+                    document.getElementById('customer-name').value = customer.Name;
+                    document.getElementById('customer-mobile').value = customer.MobileNo;
+                    document.getElementById('customer-type').value = customer.Type;
+                    document.getElementById('add-customer-title').textContent = 'ग्राहक संपादित करें';
+                    showScreen('add-customer-screen');
+                } else {
+                    showMessage('ग्राहक नहीं मिला।', false);
+                }
+            } catch (error) {
+                console.error('ग्राहक डेटा लोड करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+        
+        // लेन-देन को संपादित करने के लिए डेटा लोड करना
+        async function editTransaction(entryId) {
+            try {
+                const entry = await getData(DAILY_BOOK_STORE, entryId);
+                if (entry) {
+                    document.getElementById('entry-id').value = entry.EntryID;
+                    document.getElementById('entry-customer-id').value = entry.CustomerID;
+                    document.getElementById('entry-date').value = entry.EntryDate;
+                    document.getElementById('entry-detail').value = entry.JobDetail;
+                    document.getElementById('entry-amount').value = entry.Amount;
+                    document.getElementById('entry-status').value = entry.Status;
+                    showScreen('daily-entry-screen');
+                } else {
+                    showMessage('लेन-देन नहीं मिला।', false);
+                }
+            } catch (error) {
+                console.error('लेन-देन डेटा लोड करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+
+        // डिलीट कन्फर्मेशन मोडल दिखाना
+        function showDeleteModal(type, key, customerId = null) {
+            deleteModalData = { type, key, customerId };
+            document.getElementById('delete-modal').style.display = 'flex';
+        }
+        
+        // डेटा डिलीट करना
+        async function handleDeleteConfirm() {
+            if (!deleteModalData) return;
+            const { type, key, customerId } = deleteModalData;
+            try {
+                if (type === 'customers') {
+                    // ग्राहक के सभी लेन-देन और सारांश रिकॉर्ड को हटाएँ
+                    const customerTransactions = await getDataByIndex(DAILY_BOOK_STORE, 'CustomerID', key);
+                    
+                    for (const transaction of customerTransactions) {
+                        await deleteData(DAILY_BOOK_STORE, transaction.EntryID);
+                    }
+                    
+                    await deleteData(CUSTOMERS_STORE, key);
+                    await deleteData(SUMMARY_STORE, key); // सारांश रिकॉर्ड हटाएँ
+                    
+                    showMessage('ग्राहक और उससे संबंधित सभी रिकॉर्ड सफलतापूर्वक हटा दिए गए हैं।');
+                    
+                    showScreen('home-screen');
+                    allCustomers = await getAllData(CUSTOMERS_STORE);
+                    renderCustomerList(customerSearchInput.value);
+                    
+                } else {
+                    await deleteData(DAILY_BOOK_STORE, key);
+                    await updateCustomerSummary(customerId); // सारांश अपडेट करें
+                    showMessage('सफलतापूर्वक हटा दिया गया।');
+                    showCustomerHistory(customerId);
+                }
+            } catch (error) {
+                console.error('डेटा हटाने में विफल:', error);
+                showErrorPopup(error);
+            }
+            document.getElementById('delete-modal').style.display = 'none';
+        }
+        
+        // इंपोर्ट कन्फर्मेशन मोडल दिखाना
+        function showImportConfirmModal(data) {
+            importModalData = data;
+            document.getElementById('import-confirm-modal').style.display = 'flex';
+        }
+        
+        // डेटा इंपोर्ट करना
+        async function handleImportConfirm() {
+            document.getElementById('import-confirm-modal').style.display = 'none';
+            if (!importModalData) return;
+
+            try {
+                // 1. सभी मौजूदा डेटा को हटाएँ
+                await clearAllData();
+                
+                // 2. नए डेटा को बिना IDs के जोड़ें
+                const customerIdMap = new Map();
+                for (const customer of importModalData.customers) {
+                    const oldCustomerId = customer.CustomerID;
+                    delete customer.CustomerID; // ID हटाएँ ताकि एक नया बनाया जा सके
+                    const newId = await addData(CUSTOMERS_STORE, customer);
+                    customerIdMap.set(oldCustomerId, newId);
+                }
+                
+                for (const entry of importModalData.dailyBook) {
+                    const oldCustomerId = entry.CustomerID;
+                    const newCustomerId = customerIdMap.get(oldCustomerId);
+                    
+                    if (newCustomerId) {
+                        entry.CustomerID = newCustomerId; // नई CustomerID असाइन करें
+                        delete entry.EntryID; // ID हटाएँ ताकि एक नया बनाया जा सके
+                        await addData(DAILY_BOOK_STORE, entry);
+                    }
+                }
+                
+                // 3. सभी ग्राहकों के लिए सारांश रिकॉर्ड को फिर से बनाएँ
+                const allCustomersAfterImport = await getAllData(CUSTOMERS_STORE);
+                for(const customer of allCustomersAfterImport){
+                    await updateCustomerSummary(customer.CustomerID);
+                }
+                
+                // 4. सेटिंग्स को इंपोर्ट करें
+                // जाँचें कि क्या सेटिंग्स डेटा मौजूद है
+                const importedSettings = importModalData.settings;
+                const settingsToSave = importedSettings && importedSettings.id ? importedSettings : { id: THEME_KEY, theme: 'light' };
+                await updateData(SETTINGS_STORE, settingsToSave);
+                applyTheme(settingsToSave.theme);
+
+                showMessage('डेटा सफलतापूर्वक आयात किया गया।');
+                showScreen('home-screen');
+                allCustomers = await getAllData(CUSTOMERS_STORE);
+                renderCustomerList();
+            } catch (error) {
+                console.error('डेटा आयात करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+
+        // JSON व्यूअर स्क्रीन दिखाना
+        async function showJsonViewer() {
+            try {
+                const customers = await getAllData(CUSTOMERS_STORE);
+                const dailyBook = await getAllData(DAILY_BOOK_STORE);
+                const summary = await getAllData(SUMMARY_STORE);
+                const settings = await getData(SETTINGS_STORE, THEME_KEY);
+                
+                const dbData = {
+                    customers: customers,
+                    dailyBook: dailyBook,
+                    customerSummary: summary,
+                    settings: settings || {}
+                };
+                
+                const jsonOutputElement = document.getElementById('json-output');
+                jsonOutputElement.textContent = JSON.stringify(dbData, null, 2);
+                
+                showScreen('json-viewer-screen');
+            } catch (error) {
+                console.error('JSON डेटा लोड करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+        
+        // रिपोर्ट शेयर करने का फ़ंक्शन
+        async function shareReport() {
+            try {
+                // सेटिंग्स से डेटा प्राप्त करें
+                const settings = await getData(SETTINGS_STORE, THEME_KEY);
+                const userName = settings?.user_name || 'आपके नाम';
+                const upiId = settings?.upi_id;
+
+                if (!upiId) {
+                    showMessage('कृपया सेटिंग्स में अपनी UPI ID दर्ज करें।', false);
+                    return;
+                }
+
+                // ग्राहक और लेन-देन डेटा प्राप्त करें
+                const customer = allCustomers.find(c => c.CustomerID === currentCustomerId);
+                const allTransactions = await getDataByIndex(DAILY_BOOK_STORE, 'CustomerID', currentCustomerId);
+
+                const fromDate = fromDateInput.value;
+                const toDate = toDateInput.value;
+                const fromDateObj = new Date(fromDate);
+                const toDateObj = new Date(toDate);
+
+                // पिछले बकाया की गणना
+                const previousTransactions = allTransactions.filter(t => new Date(t.EntryDate) < fromDateObj);
+                let previousDue = 0;
+                let previousPaid = 0;
+                previousTransactions.forEach(t => {
+                    if (t.Status === 'DUE') previousDue += t.Amount;
+                    else previousPaid += t.Amount;
+                });
+                const previousBalance = previousDue - previousPaid;
+
+                // वर्तमान लेन-देन और सारांश की गणना
+                const currentTransactions = allTransactions.filter(t => {
+                    const entryDate = new Date(t.EntryDate);
+                    return entryDate >= fromDateObj && entryDate <= toDateObj;
+                });
+                
+                let currentDue = 0;
+                let currentPaid = 0;
+                const transactionHistoryList = [];
+                currentTransactions.forEach(t => {
+                    if (t.Status === 'DUE') {
+                        currentDue += t.Amount;
+                        transactionHistoryList.push(`➡️ ${t.EntryDate}: ${t.JobDetail || 'कोई विवरण नहीं'} - ₹${t.Amount.toFixed(2)} (बकाया)`);
+                    } else {
+                        currentPaid += t.Amount;
+                        transactionHistoryList.push(`⬅️ ${t.EntryDate}: ${t.JobDetail || 'कोई विवरण नहीं'} - ₹${t.Amount.toFixed(2)} (भुगतान किया)`);
+                    }
+                });
+                
+                const totalBalance = previousBalance + currentDue - currentPaid;
+
+                // रिपोर्ट मैसेज तैयार करें
+                const transactionListText = transactionHistoryList.length > 0 ? transactionHistoryList.join('\n') : 'कोई लेन-देन नहीं।';
+                const reportMessage = `
+🙏नमस्ते ${customer.Name},
+📄 यह आपके खाते का नवीनतम विवरण है।
+---------------------------
+👤 ${userName}
+💰 पिछला बकाया (चयनित तिथि से पहले):
+₹${previousBalance.toFixed(2)}
+---------------------------
+📄 लेन-देन हिस्ट्री (${fromDateObj.toLocaleDateString('hi-IN')} - ${toDateObj.toLocaleDateString('hi-IN')})
+${transactionListText}
+---------------------------
+📊 समरी
+कुल देय: ₹${currentDue.toFixed(2)}
+कुल भुगतान किया: ₹${currentPaid.toFixed(2)}
+
+💰 कुल बकाया राशि = पिछला बकाया + कुल देय - कुल भुगतान
+₹${totalBalance.toFixed(2)} = ${previousBalance.toFixed(2)} + ${currentDue.toFixed(2)} - ${currentPaid.toFixed(2)}
+💰 कुल बकाया राशि = ₹${totalBalance.toFixed(2)}
+
+${totalBalance > 0 ? `🔗 UPI के माध्यम से भुगतान करने के लिए: upi://pay?pa=${upiId}&pn=${encodeURIComponent(userName)}&am=${totalBalance.toFixed(2)}&cu=INR` : ''}
+`;
+                
+                // WhatsApp पर शेयर करें
+                const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(reportMessage)}`;
+                window.open(whatsappUrl);
+
+            } catch (error) {
+                console.error('रिपोर्ट शेयर करने में विफल:', error);
+                showErrorPopup(error);
+            }
+        }
+        
+        // सभी इवेंट लिसनर
+        window.onload = async () => {
+            try {
+                await openDatabase();
+                const settings = await getData(SETTINGS_STORE, THEME_KEY);
+                if (settings) {
+                    applyTheme(settings.theme);
+                }
+                allCustomers = await getAllData(CUSTOMERS_STORE);
+                await renderCustomerList();
+                showScreen('home-screen');
+            } catch (error) {
+                console.error("ऐप लोड करने में विफल:", error);
+                showErrorPopup(error);
+            }
+            
+            // Fullscreen button listeners
+            fullscreenBtns.forEach(btn => {
+                btn.onclick = toggleFullscreen;
+            });
+            
+            // Database menu toggle
+            const databaseMenuBtn = document.getElementById('database-menu-btn');
+            const databaseDropdown = document.getElementById('database-dropdown');
+            databaseMenuBtn.onclick = (event) => {
+                event.stopPropagation();
+                databaseDropdown.classList.toggle('show');
+            };
+            document.addEventListener('click', () => {
+                databaseDropdown.classList.remove('show');
+            });
+            
+            // Home screen buttons
+            document.getElementById('add-customer-btn').onclick = () => {
+                document.getElementById('customer-form').reset();
+                document.getElementById('customer-id').value = '';
+                document.getElementById('add-customer-title').textContent = 'नया ग्राहक जोड़ें';
+                showScreen('add-customer-screen');
+            };
+            document.getElementById('overallSummaryBtn').onclick = showOverallSummary;
+            document.getElementById('show-json-btn').onclick = showJsonViewer;
+            document.getElementById('settings-btn').onclick = async () => {
+                const settings = await getData(SETTINGS_STORE, THEME_KEY);
+                if (settings) {
+                    document.querySelector(`input[name="theme"][value="${settings.theme}"]`).checked = true;
+                    document.getElementById('upi-id').value = settings.upi_id || '';
+                    document.getElementById('user-name').value = settings.user_name || '';
+                }
+                showScreen('settings-screen');
+            };
+
+            // Search bar
+            customerSearchInput.addEventListener('input', (event) => {
+                renderCustomerList(event.target.value);
+            });
+
+            // Back buttons
+            document.getElementById('add-customer-back-btn').onclick = () => { showScreen('home-screen'); renderCustomerList(customerSearchInput.value); };
+            document.getElementById('daily-entry-back-btn').onclick = () => showCustomerHistory(currentCustomerId);
+            document.getElementById('history-back-btn').onclick = () => { showScreen('home-screen'); renderCustomerList(customerSearchInput.value); };
+            document.getElementById('overall-summary-back-btn').onclick = () => { showScreen('home-screen'); renderCustomerList(customerSearchInput.value); };
+            document.getElementById('json-viewer-back-btn').onclick = () => { showScreen('home-screen'); renderCustomerList(customerSearchInput.value); };
+            document.getElementById('settings-back-btn').onclick = () => { showScreen('home-screen'); renderCustomerList(customerSearchInput.value); };
+            
+            // History screen
+            document.getElementById('addTransactionTopBtn').onclick = () => {
+                document.getElementById('daily-entry-form').reset();
+                document.getElementById('entry-id').value = '';
+                document.getElementById('entry-customer-id').value = currentCustomerId;
+                document.getElementById('entry-date').valueAsDate = new Date();
+                showScreen('daily-entry-screen');
+            };
+            
+            // Date filter OK button click handler
+            document.getElementById('filter-ok-btn').onclick = () => {
+                const fromDate = fromDateInput.value;
+                const toDate = toDateInput.value;
+                
+                // तारीखों को वैलिडेट करें
+                if (new Date(fromDate) > new Date(toDate)) {
+                    showMessage('From तारीख To तारीख से पहले होनी चाहिए।', false);
+                    return;
+                }
+                showCustomerHistory(currentCustomerId, fromDate, toDate);
+            };
+
+            // Share button click handler
+            shareReportBtn.onclick = shareReport;
+            
+            // Delete modal buttons
+            document.getElementById('delete-confirm-btn').onclick = handleDeleteConfirm;
+            document.getElementById('delete-cancel-btn').onclick = () => document.getElementById('delete-modal').style.display = 'none';
+
+            // Import/Export buttons
+            document.getElementById('import-btn').onclick = () => fileInput.click();
+            document.getElementById('export-btn').onclick = async () => {
+                try {
+                    const customers = await getAllData(CUSTOMERS_STORE);
+                    const dailyBook = await getAllData(DAILY_BOOK_STORE);
+                    const summary = await getAllData(SUMMARY_STORE);
+                    const settings = await getData(SETTINGS_STORE, THEME_KEY);
+                    
+                    const data = { customers, dailyBook, customerSummary: summary, settings: settings || {} };
+                    const jsonString = JSON.stringify(data, null, 2);
+                    const blob = new Blob([jsonString], { type: 'application/json' });
+                    
+                    const a = document.createElement('a');
+                    const url = URL.createObjectURL(blob);
+                    
+                    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+                    a.href = url;
+                    a.download = `khatabook_${timestamp}.json`;
+                    
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    showMessage('डेटा सफलतापूर्वक एक्सपोर्ट किया गया।');
+                } catch (error) {
+                    console.error('डेटा एक्सपोर्ट करने में विफल:', error);
+                    showErrorPopup(error);
+                }
+            };
+
+            // File input change listener for import
+            fileInput.onchange = (event) => {
+                const file = event.target.files[0];
+                if (!file) {
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        if (!importedData.customers || !Array.isArray(importedData.customers) || !importedData.dailyBook || !Array.isArray(importedData.dailyBook)) {
+                            showMessage('अमान्य फ़ाइल प्रारूप।', false);
+                            return;
+                        }
+                        showImportConfirmModal(importedData);
+                    } catch (error) {
+                        showErrorPopup(error);
+                    }
+                };
+                reader.readAsText(file);
+            };
+
+            // Import modal buttons
+            document.getElementById('import-confirm-btn').onclick = handleImportConfirm;
+            document.getElementById('import-cancel-btn').onclick = () => document.getElementById('import-confirm-modal').style.display = 'none';
+            
+            // Error modal buttons
+            document.getElementById('close-error-btn').onclick = closeErrorPopup;
+            document.getElementById('copy-error-btn').onclick = () => {
+                try {
+                    const textToCopy = errorDetails.textContent;
+                    const tempTextarea = document.createElement('textarea');
+                    tempTextarea.value = textToCopy;
+                    document.body.appendChild(tempTextarea);
+                    tempTextarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(tempTextarea);
+                    showMessage('त्रुटि विवरण कॉपी हो गया।', true);
+                    closeErrorPopup();
+                } catch (err) {
+                    showMessage('कॉपी करने में विफल।', false);
+                    console.error("कॉपी करने में विफल:", err);
+                }
+            };
+        };
+    </script>
+</body>
+</html>
